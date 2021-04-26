@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Personalized Map</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<script>
+    class ClickableMarker extends mapboxgl.Marker{
+        onClick(handleClick){
+            this._handleClick = handleClick;
+            return this;
+        }
+        _onMapClick(e){
+            const targetElement = e.originalEvent.target;
+            const element = this._element;
+            if (this._handleClick && (targetElement===element || element.contains((targetElement)))){
+                this._handleClick();
+            }
+        }
+    };
+	mapboxgl.accessToken = 'pk.eyJ1IjoiaG9uZ2xlaSIsImEiOiJja251dTZtZjYwZHp4Mm9tbTNlMWFhZ3o4In0.h5SUIBqsfEiHj41z8ajdwg';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [12.550343, 55.665957],
+        zoom: 2
+    });
+
+    var dep_lat = [];
+    var dep_lng = [];
+    var arr_lat = [];
+    var arr_lng = [];
+    var new_markers = [];
+    const api_url = "http://localhost:8080/api/v1/flights";
+    async function getapi(url){
+        const response = await fetch(url);
+        var data = await response.json();
+        return data;
+    }
+    getapi(api_url).then(data => {show(data);});
+    function show(data){
+        /*
+        * This is the only function to manipulate with all airlines
+        */
+        for (r in data){
+            dep_lat.push(data[r]['DepLat']);
+            arr_lat.push(data[r]['ArrLat']);
+            dep_lng.push(data[r]['DepLng']);
+            arr_lng.push(data[r]['ArrLng']);
+        }
+
+        /*
+        * Load all airlines on the map initially, without the point marker
+        */
+        map.on('load', function () {
+            for (var i = 0; i < dep_lat.length; i++){
+                //console.log("init map test");
+                map.addSource('route'+String(i),{
+                    'type': 'geojson',
+                    'data': {
+                        'type': 'Feature',
+                        'properties': {},
+                        'geometry': {
+                            'type': 'LineString',
+                            'coordinates': [
+                                [dep_lng[i],dep_lat[i]],
+                                [arr_lng[i],arr_lat[i]]
+                            ]
+                        }
+                    }
+                });
+                map.addLayer({
+                    'id': 'route'+String(i),
+                    'type': 'line',
+                    'source': 'route'+String(i),
+                    'layout': {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    'paint': {
+                        'line-color': '#C0C',
+                        'line-width': 3
+                    }
+                });
+            }
+        });
+
+
+        for (var i = 0; i < dep_lat.length; i++){
+            let deplng = dep_lng[i];
+            let deplat = dep_lat[i];
+            let arrlng = arr_lng[i];
+            let arrlat = arr_lat[i];
+            new ClickableMarker({color: 'red'})
+                .setLngLat([deplng,deplat])
+                .onClick(() => {
+                    alert(show_route(deplng, deplat));
+                })
+                .addTo(map);
+            new ClickableMarker({color: 'red'})
+                .setLngLat([arrlng,arrlat])
+                .onClick(() => {
+                    alert(show_route(arrlng, arrlat));
+                })
+                .addTo(map);
+        }
+
+        /*
+        * End of Function
+        */
+    }
+
+    /*
+    * Other Simple Setup && Test
+    */
+
+    function show_route(lng, lat){
+        let related_lng = [];
+        let related_lat = [];
+        for (var i = 0; i < dep_lat.length; i++){
+            if(dep_lat[i] === lat && dep_lng[i] === lng){
+                related_lat.push(arr_lat[i]);
+                related_lng.push(arr_lng[i]);               
+            }
+            if(arr_lat[i] === lat && arr_lng[i] === lng){
+                related_lat.push(dep_lat[i]);
+                related_lng.push(dep_lng[i]);
+            }            
+        }
+
+        var res = `Here are the other ends for  Point(${lng}, ${lat}):`;
+        for (var i = 0; i < related_lat.length; i++){
+            res += `\n                                               Point(${related_lng[i]}, ${related_lat[i]})`;
+        }
+        res += "\n";
+        return res;
+    }
+
+    var marker1 = new ClickableMarker({color: 'yellow'})
+            .setLngLat([-10.23,-20.32])
+            .onClick(() => {alert("This is nothing!")})
+            .addTo(map);
+</script>
+
+</body>
+</html>
