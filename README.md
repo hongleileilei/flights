@@ -16,6 +16,7 @@ the database: DepLng, DepLat, ArrLat, ArrLng, id, which is shown as below as cod
 | 10.1234 | 20.4321 | 50.4567 | 69.8765 | 1   |
 ...
 ```
+FYI, the database name is defined as ```Volansi_Flight.flights```
 
 ## Frontend
 For convience, I developed at ```<script></script>``` section in index.HTML. In current version, hiding unrelated 
