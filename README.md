@@ -17,6 +17,7 @@ the database: DepLng, DepLat, ArrLat, ArrLng, id, which is shown as below as cod
 ...
 ```
 FYI, the database name is defined as ```Volansi_Flight.flights```
+FYI, the extra endpoint required is in the ```/src``` folder
 
 ## Frontend (port: localhost:8081
 For convience, I developed at ```<script></script>``` section in index.HTML. In current version, hiding unrelated 
