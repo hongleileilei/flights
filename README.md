@@ -22,4 +22,4 @@ For convience, I developed at ```<script></script>``` section in index.HTML. In 
 markers and lines is still under development, but we may see connections by popup alerts.
 
 Demo:
-![alt text](https://github.com/hongleileilei/flights/map.png)
+![alt text](https://github.com/hongleileilei/flights/blob/master/map.png)
