@@ -125,6 +125,10 @@ body { margin: 0; padding: 0; }
     */
 
     function show_route(lng, lat){
+        map.on('load',function(){
+            console.log("Testing");
+        });
+        console.log("Testing outside of the map.on();");
         let related_lng = [];
         let related_lat = [];
         for (var i = 0; i < dep_lat.length; i++){
