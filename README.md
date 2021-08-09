@@ -5,7 +5,7 @@ Version 0.11
 Here is my second edition. I add required endpoint for returning data sorted by departure longitude and latitude.
 I used Exspress.js as my backend framework and use MapBox.GL.js as my front-end helper for loading maps and markers.
 
-## Backend (port: localhost:8080
+## Backend (port: localhost:8080)
 To run the backend, cmd
 ```
 local@server$$ npm start
@@ -24,7 +24,7 @@ FYI, the database name is defined as ```Volansi_Flight.flights```.
 
 FYI, the extra endpoint required is in the ```/src``` folder.
 
-## Frontend (port: localhost:8081
+## Frontend (port: localhost:8081)
 To run the frontend, cmd
 ```
 local@client$$ http-server
